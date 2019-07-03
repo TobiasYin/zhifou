@@ -83,7 +83,3 @@ create table comment
     foreign key (user_id) references user (id),
     foreign key (answer_id) references answer (id)
 );
-
-# select * from answer where user_id in (select followed_id from follow where follow_id = 'id')
-
-insert into user(id, name, password) VALUES ('bb105db1addc44ad83a60de84b0863cd', 'tobias', 'qwe45623')

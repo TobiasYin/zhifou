@@ -17,7 +17,7 @@
         String password = request.getParameter("password");
         String captcha = request.getParameter("captcha");
         String realcaptcha = (String) session.getAttribute("captcha");
-        if (!realcaptcha.equals(captcha)){
+        if (!realcaptcha.toLowerCase().equals(captcha.toLowerCase())){
             success = false;
             error = "验证码错误";
         }else {

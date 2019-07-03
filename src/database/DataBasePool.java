@@ -14,7 +14,7 @@ public class DataBasePool {
     static {
         ds = new BasicDataSource();
         Properties configs = new Properties();
-        try (FileInputStream fs = new FileInputStream("F:\\ZhiFou\\out\\production\\ZhiFou\\database\\db.properties")) {
+        try (FileInputStream fs = new FileInputStream("D:\\Project\\zhifou\\out\\production\\zhifou\\database\\db.properties")) {
             configs.load(fs);
             ds.setDriverClassName(configs.getProperty("driver"));
             ds.setUrl(configs.getProperty("url"));
