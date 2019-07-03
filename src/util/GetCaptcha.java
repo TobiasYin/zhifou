@@ -11,7 +11,7 @@ public class GetCaptcha {
         private BufferedImage image;
         private String captcha;
 
-        public Captcha(BufferedImage image, String captcha) {
+        private Captcha(BufferedImage image, String captcha) {
             this.image = image;
             this.captcha = captcha;
         }
@@ -48,6 +48,7 @@ public class GetCaptcha {
         return new Captcha(image, cap);
     }
 
+    @SuppressWarnings("all")
     private static Font getRandomFont() {
         Random r = new Random();
         int font_type = r.nextInt(3);
@@ -64,7 +65,7 @@ public class GetCaptcha {
         return new Color(red, green, blue);
     }
 
-    private static String GetRandomString(int n) {
+    public static String GetRandomString(int n) {
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {

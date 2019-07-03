@@ -3,14 +3,12 @@ package beans;
 import database.DataBasePool;
 import util.GetUUID;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-public class User {
+public class User implements Entity {
     private String username;
     private String id;
     private String intro;
@@ -54,13 +52,14 @@ public class User {
         id = real_id;
     }
 
+    //使用此构造器后请对比是否是真实用户.
     public User(String username, String id) {
         this.username = username;
         this.id = id;
         connectDB(username, "select id,  password, introduce, head, name from user where name = ?");
     }
 
-    public User(String username, String id, String intro, String head) {
+    private User(String username, String id, String intro, String head) {
         this.username = username;
         this.id = id;
         real_id = id;
@@ -81,6 +80,7 @@ public class User {
                 statement.setString(3, password);
                 if (statement.executeUpdate() == 1) {
                     user.connectDB(username, "select id,  password, introduce, head, name from user where name = ?");
+                    user.id = user.real_id;
                 } else {
                     user.message = "未知错误";
                     user.status = false;
@@ -301,6 +301,22 @@ public class User {
         return false;
     }
 
+    //是否赞同一篇文章, 由于涉及两个实体, 在两个实体中提供相同方法.
+    public int isAgree(Answer answer) {
+        return answer.isAgree(this);
+    }
+
+    public boolean agree(Answer answer){
+        return answer.agree(this);
+    }
+
+    public boolean disagree(Answer answer){
+        return answer.disAgree(this);
+    }
+    public boolean cancelAgree(Answer answer){
+        return answer.cancelAgree(this);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof User) {
@@ -308,13 +324,5 @@ public class User {
             return o.username.equals(username) && o.id.equals(id);
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-        User u = new User("Tobias");
-        User u2 = User.getById("f2d478e152b74b3ca9cc76093b3058b4");
-        System.out.println(u.toString());
-        System.out.println(u2.toString());
-        System.out.println(u.isFollow(u2));
     }
 }
