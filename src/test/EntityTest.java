@@ -79,7 +79,7 @@ public class EntityTest {
             System.out.println(a);
         }
         System.out.println("===============");
-        answers = Answer.getHottestAnswer(0, 5);
+        answers = Answer.getHottestAnswers(0, 5);
         if (answers == null) return;
         for (Answer a:answers) {
             System.out.println(a);

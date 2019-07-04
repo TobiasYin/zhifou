@@ -11,7 +11,7 @@
     boolean success;
     User u = (User) request.getAttribute("user");
     Map<String, Object>  res = new HashMap<>();
-    ArrayList<Answer> answers = Answer.getHottestAnswer(start, end);
+    ArrayList<Answer> answers = Answer.getHottestAnswers(start, end);
     List<Map<String, Object>> list;
     if (answers != null){
         list = answers.stream().map((it) -> {

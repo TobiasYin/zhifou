@@ -187,7 +187,7 @@ public class Answer implements Entity {
         return null;
     }
 
-    public static ArrayList<Answer> getHottestAnswer(int start, int end) {
+    public static ArrayList<Answer> getHottestAnswers(int start, int end) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time, agrees from answer natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
             return getAnswersList(start, end, s);
@@ -226,7 +226,7 @@ public class Answer implements Entity {
         return answers;
     }
 
-    public static ArrayList<Answer> getAnswerByQuestion(Question q) {
+    public static ArrayList<Answer> getAnswersByQuestion(Question q) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where question_id = ? order by time desc;")) {
             s.setString(1, q.getId());
@@ -246,7 +246,7 @@ public class Answer implements Entity {
     }
 
 
-    public static ArrayList<Answer> getAnswerByUser(User u) {
+    public static ArrayList<Answer> getAnswersByUser(User u) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where user_id = ? order by time desc;")) {
             s.setString(1, u.getId());

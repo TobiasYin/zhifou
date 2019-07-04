@@ -95,7 +95,7 @@ public class Question implements Entity {
         return null;
     }
 
-    public static ArrayList<Question> getQusetionByUser(User u) {
+    public static ArrayList<Question> getQusetionsByUser(User u) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question, content, user_id, time from question where user_id = ? order by time desc;")) {
             s.setString(1, u.getId());
