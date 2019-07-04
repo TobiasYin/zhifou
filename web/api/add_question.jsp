@@ -22,7 +22,7 @@
             res.put("error", "发生为止错误");
             success = false;
         }else {
-            q.setTopic(topics);
+            q.setTopics(topics);
             success = true;
             res.put("question_id", q.getId());
         }

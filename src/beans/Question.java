@@ -15,10 +15,27 @@ public class Question implements Entity {
     private String content;
     private Timestamp time;
     private User user;
+    private ArrayList<Topic> topics;
 
     public static void main(String[] args) {
         Question question = new Question("bb105db1adc344ad84ds0de84b0863t4");
         System.out.println(question);
+    }
+
+    public static ArrayList<Question> getQuestionsByTopic(Topic t){
+        ArrayList<Question> ret = new ArrayList<>();
+        try(Connection c = DataBasePool.getConnection();
+        PreparedStatement s = c.prepareStatement("select question_id from ques_topic where  topic_id = ?")) {
+            s.setString(1, t.getId());
+            ResultSet res = s.executeQuery();
+            while (res.next()){
+                String id = res.getString(1);
+                ret.add(new Question(id));
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return ret;
     }
 
     private void connectDB(String id) {
@@ -34,6 +51,7 @@ public class Question implements Entity {
                 content = res.getString(4);
                 time = res.getTimestamp(5);
                 user = User.getById(user_id);
+                topics = Topic.getTopicsByQuestion(this);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -140,6 +158,10 @@ public class Question implements Entity {
         return time;
     }
 
+    public ArrayList<Topic> getTopics() {
+        return topics;
+    }
+
     @Override
     public Map<String, Object> getFields() {
         HashMap<String, Object> res = new HashMap<>();
@@ -164,8 +186,29 @@ public class Question implements Entity {
                 '}';
     }
 
-    public boolean setTopic(String[] topics) {
-        //TODO implement the method win create topic entity;
+    private boolean addTopic(Topic topics){
+        try(Connection c = DataBasePool.getConnection();
+        PreparedStatement s = c.prepareStatement("insert into ques_topic(question_id, topic_id) values (?, ?)")) {
+            s.setString(1, id);
+            s.setString(2, topics.getId());
+            if (s.executeUpdate() == 1){
+                return true;
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
         return false;
+    }
+
+    public boolean setTopics(String[] topics) {
+        if (topics.length + getTopics().size() > 3)
+            return false;
+        for (String tid :topics){
+            Topic topic = new Topic(tid);
+            if (topic.getId()!=null){
+                if(!addTopic(topic)) return false;
+            }
+        }
+        return true;
     }
 }

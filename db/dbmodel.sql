@@ -83,3 +83,6 @@ create table comment
     foreign key (user_id) references user (id),
     foreign key (answer_id) references answer (id)
 );
+
+create fulltext index ft_idx on answer(content) with parser ngram;
+alter table answer add fulltext content(content);

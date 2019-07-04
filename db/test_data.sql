@@ -13,3 +13,9 @@ values ('rgdhg8e152b74b3ca9cc76093b3058b4', 'bb105db1adc344ad84ds0de84b0863t4', 
 
 select * from answer;
 
+select id, question_id, user_id, content, time from answer where content like '%17eg%';
+
+
+select * from answer;
+
+show indexes from answer;
