@@ -177,7 +177,7 @@ return:
 
 最热和最新具有基本相同的返回结果与请求方式, 不同的是, 最热返回的数据是赞同数和时间通过一定比例计算排序后的文章列表.
 ```
-url: /api/hotest
+url: /api/hottest
 method: get
 desc: 获取最热回答
 send:
@@ -809,5 +809,3 @@ return:
 这是目前我所想到的api的主要内容, 有需要还可以增加, 修改, 删除.
 
 By Tobias. yrt1999@163.com
-
-2019.6.30

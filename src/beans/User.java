@@ -195,6 +195,7 @@ public class User implements Entity {
         return "{\"username\":\"" + username + "\",\"userid\":\"" + id + "\",\"head_sculpture\":\"" + getHead() + "\",\"intro\":\"" + getIntro() + "\"}";
     }
 
+    @Override
     public Map<String, Object> getFields() {
         HashMap<String, Object> res = new HashMap<>();
         res.put("username", username);
@@ -321,7 +322,7 @@ public class User implements Entity {
     public boolean equals(Object obj) {
         if (obj instanceof User) {
             User o = (User) obj;
-            return o.username.equals(username) && o.id.equals(id);
+            return o.username.equals(username) && o.id.equals(id) && o.real_id.equals(real_id);
         }
         return false;
     }
