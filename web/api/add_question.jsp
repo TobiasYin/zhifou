@@ -19,7 +19,7 @@
     }else {
         Question q = Question.addQuestion(u, question_title, question_desc);
         if (q == null){
-            res.put("error", "发生为止错误");
+            res.put("error", "发生未知错误");
             success = false;
         }else {
             q.setTopics(topics);
