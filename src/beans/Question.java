@@ -140,7 +140,8 @@ public class Question implements Entity {
         return time;
     }
 
-    public Map getFields() {
+    @Override
+    public Map<String, Object> getFields() {
         HashMap<String, Object> res = new HashMap<>();
         res.put("question_id", id);
         res.put("user_id", user_id);
@@ -161,5 +162,10 @@ public class Question implements Entity {
                 ",\"time:" + time.getTime() +
                 ",\"user:" + user +
                 '}';
+    }
+
+    public boolean setTopic(String[] topics) {
+        //TODO implement the method win create topic entity;
+        return false;
     }
 }

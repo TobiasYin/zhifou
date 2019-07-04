@@ -83,6 +83,8 @@ public class Answer implements Entity {
 
     public int isAgree(User u) {
         int agree = 0;
+        if (u == null)
+            return agree;
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement statement = c.prepareStatement("select agree from agree where user_id = ? and answer_id = ?")) {
             statement.setString(1, u.getId());
@@ -287,7 +289,8 @@ public class Answer implements Entity {
         return false;
     }
 
-    public Map getFields() {
+    @Override
+    public Map<String, Object> getFields() {
         HashMap<String, Object> res = new HashMap<>();
         res.put("answer_id", id);
         res.put("question_id", question_id);

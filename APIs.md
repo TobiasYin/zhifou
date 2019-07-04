@@ -177,7 +177,7 @@ return:
 
 最热和最新具有基本相同的返回结果与请求方式, 不同的是, 最热返回的数据是赞同数和时间通过一定比例计算排序后的文章列表.
 ```
-url: /api/hotest
+url: /api/hottest
 method: get
 desc: 获取最热回答
 send:
@@ -544,7 +544,7 @@ method: get
 desc: 获取用户提问, 按时间排序
 send:
 	user_id: str #用户的id
-	start: int
+	start: int	
 	end: int #获取最新最热的条目, 区间从0开始, 前闭后开,[start,end) 建议初始获取20条, 之后每次加载更多获取5条. 即初始start=0&end=20, 第二次start=20&end=25....
 return:
 	success: bool
