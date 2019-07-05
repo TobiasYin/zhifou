@@ -1,4 +1,4 @@
-# select * from answer where user_id in (select followed_id from follow where follow_id = 'id')
+
 
 insert into user(id, name, password) VALUES ('bb105db1addc44ad83a60de84b0863cd', 'tobias', 'qwe45623');
 insert into user(id, name, password) VALUES ('f2d478e152b74b3ca9cc76093b3058b4', 'Test_user1', 'qwe45623');
@@ -19,3 +19,7 @@ select id, question_id, user_id, content, time from answer where content like '%
 select * from answer;
 
 show indexes from answer;
+
+select id, question_id, user_id, content, time, agrees from (select id, question_id, user_id, content, time from answer where user_id in (select followed_id from follow where follow_id = ?)) as A natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?;
+
+select * from user;

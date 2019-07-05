@@ -265,6 +265,18 @@ public class Answer implements Entity {
         return null;
     }
 
+    public static ArrayList<Answer> getFollowingsAnswersList(User u, int start, int end) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time, agrees from (select id, question_id, user_id, content, time from answer where user_id in (select followed_id from follow where follow_id = ?)) as A natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
+            s.setString(1, u.getId());
+            s.setInt(2, end);
+            return getAnswersList(start, end, s);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     private static Answer initAnswer(ResultSet result) throws SQLException {
         Answer item = new Answer();
         item.id = result.getString(1);
