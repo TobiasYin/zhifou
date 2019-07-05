@@ -1,4 +1,6 @@
-<%@ page import="beans.User"%><%@ page import="java.awt.*"%><%@ page import="javax.imageio.stream.ImageInputStream"%>
+<%@ page import="beans.User" %>
+<%@ page import="java.awt.*" %>
+<%@ page import="javax.imageio.stream.ImageInputStream" %>
 <%@ page import="javax.imageio.ImageIO" %>
 <%@ page import="java.awt.image.BufferedImage" %>
 <%@ page import="com.mysql.cj.jdbc.Blob" %>
@@ -15,13 +17,14 @@
     String url;
     if (u.getId() == null) {
         url = "F:\\ZhiFou\\web\\image\\default.jpg";
-        try(InputStream is = new BufferedInputStream(new FileInputStream(url))) {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(url))) {
             BufferedImage image = ImageIO.read(is);
             ImageIO.write(image, "jpeg", response.getOutputStream());
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-    else
+    } else {
         url = u.getHead();
+        pageContext.forward("/image/user_head/" + url);
+    }
 %>

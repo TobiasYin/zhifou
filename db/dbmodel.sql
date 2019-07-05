@@ -58,9 +58,10 @@ create table agree
 
 create table topic
 (
-    id    varchar(32) primary key,
-    topic varchar(32) not null,
-    head  tinytext default null
+    id          varchar(32) primary key,
+    topic       tinytext not null,
+    description text     default null,
+    head        tinytext default null
 );
 
 create table ques_topic
@@ -84,5 +85,6 @@ create table comment
     foreign key (answer_id) references answer (id)
 );
 
-create fulltext index ft_idx on answer(content) with parser ngram;
-alter table answer add fulltext content(content);
+create fulltext index ft_idx on answer (content) with parser ngram;
+alter table answer
+    add fulltext content (content);

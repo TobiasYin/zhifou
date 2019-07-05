@@ -296,6 +296,7 @@ send:
 return:
 	success: bool #返回是否成功获取
 	error: str #仅当success为false是, 有此属性, 值为错误原因
+	hasMore: bool #是否还有更多
 	data: list #data为dict组成的list, 每一个dict描述一个话题的信息, 具体属性如下:
 		topic_name: str #话题的名字
 		topic_id: str #话题的id
@@ -431,6 +432,7 @@ return:
 	topics: list #本问题的话题, 每一个元素为一个dict
 		topic: str #话题的名字
 		topic_id: str #话题的id
+	time: int #问题创建的时间
 	success: bool
 	error: str #exist when success = false
 	hasMore: bool #返回是否还有更多, 如果有更多, 可显示加载更多的按钮

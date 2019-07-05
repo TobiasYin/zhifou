@@ -16,7 +16,7 @@
     }else {
         Part part = request.getPart("data");
         if (part.getContentType().equals("image/png") || part.getContentType().equals("image/jpeg")){
-            String path = ((ServletContext)jspContext).getRealPath("image/user_head/");
+            String path = ((ServletContext)jspContext).getRealPath("/image/user_head/");
             String name = u.getId()+System.currentTimeMillis() + "." + part.getContentType().split("/")[1];
             part.write(path + name);
             boolean res = u.setHead(name);

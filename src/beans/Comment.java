@@ -1,6 +1,7 @@
 package beans;
 
 import database.DataBasePool;
+import util.GetUUID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -55,13 +56,51 @@ public class Comment implements Entity {
         this.refer_id = refer_id;
     }
 
+    public static Comment addComment(Answer answer, User user, String content, Comment refer) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s1 = c.prepareStatement("insert into comment (id, user_id, answer_id, content, refer) values (?,?,?,?,?)");
+             PreparedStatement s2 = c.prepareStatement("insert into comment (id, user_id, answer_id, content) values (?,?,?,?)")) {
+            PreparedStatement s;
+            String id = GetUUID.getUUID();
+            Comment comment = new Comment();
+            if (refer == null) {
+                s2.setString(1, id);
+                s2.setString(2, user.getId());
+                s2.setString(3, answer.getId());
+                s2.setString(4, content);
+                s = s2;
+            } else {
+                s1.setString(1, id);
+                s1.setString(2, user.getId());
+                s1.setString(3, answer.getId());
+                s1.setString(4, content);
+                s1.setString(5, refer.getId());
+                comment.refer_id = refer.getRefer_id();
+                comment.refer = refer;
+                s = s1;
+            }
+            if (s.executeUpdate() == 1) {
+                comment.id = id;
+                comment.content = content;
+                comment.answer = answer;
+                comment.user = user;
+                comment.answer_id = answer.getId();
+                comment.time = Timestamp.valueOf(String.valueOf(System.currentTimeMillis() / 1000));
+                return comment;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static ArrayList<Comment> getCommentsByAnswer(Answer answer) {
         ArrayList<Comment> ret = new ArrayList<>();
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, user_id, answer_id, content, refer, time from comment where answer_id = ?")) {
             s.setString(1, answer.getId());
             ResultSet res = s.executeQuery();
-            while (res.next()){
+            while (res.next()) {
                 Comment com = new Comment();
                 com.id = res.getString(1);
                 com.user_id = res.getString(2);
@@ -72,7 +111,7 @@ public class Comment implements Entity {
                 com.answer = answer;
                 com.user = User.getById(com.user_id);
             }
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return ret;

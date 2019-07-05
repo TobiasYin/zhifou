@@ -226,17 +226,22 @@ public class Answer implements Entity {
         return answers;
     }
 
-    public static ArrayList<Answer> getAnswersByQuestion(Question q) {
+    public static ArrayList<Answer> getAnswersByQuestion(Question q, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where question_id = ? order by time desc;")) {
+             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where question_id = ? order by time desc limit ?;")) {
             s.setString(1, q.getId());
+            s.setInt(2, end);
             ArrayList<Answer> res = new ArrayList<>();
             ResultSet result = s.executeQuery();
+            int couter = 0;
             while (result.next()) {
-                Answer item = initAnswer(result);
-                item.user = User.getById(item.user_id);
-                item.question = q;
-                res.add(item);
+                if (couter >= start) {
+                    Answer item = initAnswer(result);
+                    item.user = User.getById(item.user_id);
+                    item.question = q;
+                    res.add(item);
+                }
+                couter++;
             }
             return res;
         } catch (SQLException ex) {

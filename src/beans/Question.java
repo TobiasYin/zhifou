@@ -169,7 +169,7 @@ public class Question implements Entity {
         res.put("user_id", user_id);
         res.put("question_title", question);
         res.put("question_desc", content);
-        res.put("time", time);
+        res.put("time", time.getTime());
         res.put("user", user.getFields());
         return res;
     }

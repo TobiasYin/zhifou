@@ -23,3 +23,10 @@ show indexes from answer;
 select id, question_id, user_id, content, time, agrees from (select id, question_id, user_id, content, time from answer where user_id in (select followed_id from follow where follow_id = ?)) as A natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?;
 
 select * from user;
+
+desc comment;
+
+desc topic;
+
+alter table topic modify  topic tinytext not null ;
+alter table topic modify description text default null;
