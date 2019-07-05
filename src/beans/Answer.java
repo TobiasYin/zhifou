@@ -157,6 +157,11 @@ public class Answer implements Entity {
         return false;
     }
 
+    public static ArrayList<Answer> getAnswersBySearch(String text, int start, int end){
+        //TODO add Search function of answer.
+        return null;
+    }
+
     public static Answer addAnswer(Question question, User user, String content) {
         String id = GetUUID.getUUID();
         try (Connection c = DataBasePool.getConnection();
@@ -251,17 +256,22 @@ public class Answer implements Entity {
     }
 
 
-    public static ArrayList<Answer> getAnswersByUser(User u) {
+    public static ArrayList<Answer> getAnswersByUser(User u, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where user_id = ? order by time desc;")) {
+             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where user_id = ? order by time desc limit ?")) {
             s.setString(1, u.getId());
+            s.setInt(2, end);
             ArrayList<Answer> res = new ArrayList<>();
             ResultSet result = s.executeQuery();
+            int count = 0;
             while (result.next()) {
-                Answer item = initAnswer(result);
-                item.user = u;
-                item.question = new Question(item.question_id);
-                res.add(item);
+                if (count >= start) {
+                    Answer item = initAnswer(result);
+                    item.user = u;
+                    item.question = new Question(item.question_id);
+                    res.add(item);
+                }
+                count++;
             }
             return res;
         } catch (SQLException ex) {

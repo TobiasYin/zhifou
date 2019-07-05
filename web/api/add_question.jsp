@@ -5,7 +5,6 @@
   Time: 19:54
 --%>
 <%@ page contentType="application/json;charset=UTF-8" language="java" %>
-<%@ taglib prefix="j" uri="json.tag" %>
 <%
     boolean success;
     User u = (User)request.getAttribute("user");

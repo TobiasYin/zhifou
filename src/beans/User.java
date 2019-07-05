@@ -67,6 +67,11 @@ public class User implements Entity {
         this.head = head;
     }
 
+    public static ArrayList<User> getUsersBySearch(String text, int start, int end){
+        //TODO add search function of user
+        return null;
+    }
+
     public static User register(String username, String password) {
         User user = new User(username);
         try (Connection connection = DataBasePool.getConnection();

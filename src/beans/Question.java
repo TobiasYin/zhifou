@@ -95,21 +95,26 @@ public class Question implements Entity {
         return null;
     }
 
-    public static ArrayList<Question> getQusetionsByUser(User u) {
+    public static ArrayList<Question> getQuestionsByUser(User u, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, question, content, user_id, time from question where user_id = ? order by time desc;")) {
+             PreparedStatement s = c.prepareStatement("select id, question, content, user_id, time from question where user_id = ? order by time desc limit ?")) {
             s.setString(1, u.getId());
+            s.setInt(2, end);
             ArrayList<Question> res = new ArrayList<>();
             ResultSet result = s.executeQuery();
+            int counter = 0;
             while (result.next()) {
-                Question item = new Question();
-                item.id = result.getString(1);
-                item.question = result.getString(2);
-                item.content = result.getString(3);
-                item.user_id = result.getString(4);
-                item.time = result.getTimestamp(5);
-                item.user = u;
-                res.add(item);
+                if (counter >= start) {
+                    Question item = new Question();
+                    item.id = result.getString(1);
+                    item.question = result.getString(2);
+                    item.content = result.getString(3);
+                    item.user_id = result.getString(4);
+                    item.time = result.getTimestamp(5);
+                    item.user = u;
+                    res.add(item);
+                }
+                counter++;
             }
             return res;
         } catch (SQLException ex) {

@@ -458,7 +458,7 @@ method: post
 desc: 发表回答
 send:
 	question_id: str #待获取评论的文章链接
-	content: str #评论的内容
+	content: str #回答的内容
 return:
 	success: bool
 	error: str #仅当success为false是, 有此属性, 值为错误原因
@@ -600,12 +600,12 @@ url: /api/follows
 method: get
 desc: 获取关注的人的回答
 send:
-	hasMore: bool #返回是否还有更多, 如果有更多, 可显示加载更多的按钮
 	start: int
 	end: int #获取最新最热的条目, 区间从0开始, 前闭后开,[start,end) 建议初始获取20条, 之后每次加载更多获取5条. 即初始start=0&end=20, 第二次start=20&end=25....
 return:
 	success: bool
 	error: str #exist when success = false
+	hasMore: bool #返回是否还有更多, 如果有更多, 可显示加载更多的按钮
 	data: list #list的每一个成员为一个回答的信息, 为一个dict, 每一个成员的信息描述如下:
 		question_id: str #问题编号
 		question_title: str #问题标题
@@ -691,7 +691,7 @@ return:
 ## 设置个人头像
 
 ```
-url: /api/get_followings
+url: /api/set_head
 method: post
 ectype: multipart/form-data #使用此格式使上传能上传头像
 desc: 上传头像
@@ -761,6 +761,8 @@ method: get
 desc: 搜索问题和答案
 send: 
 	text: str #搜索的句子
+	start: int
+	end: int
 return:
 	success: bool
 	error: str #exist when success = false
@@ -791,6 +793,8 @@ method: get
 desc: 搜索用户
 send: 
 	text: str #搜索的句子
+	start: int
+	end: int
 return:
 	success: bool
 	error: str #exist when success = false
@@ -811,3 +815,5 @@ return:
 这是目前我所想到的api的主要内容, 有需要还可以增加, 修改, 删除.
 
 By Tobias. yrt1999@163.com
+
+Update 2019.7.6

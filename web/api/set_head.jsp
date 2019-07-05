@@ -20,10 +20,21 @@
             String name = u.getId()+System.currentTimeMillis() + "." + part.getContentType().split("/")[1];
             part.write(path + name);
             boolean res = u.setHead(name);
+            if (!res){
+                success = false;
+                error = "未知错误";
+            } else success = true;
+        }else {
+            success = false;
+            error = "不支持的格式";
         }
     }
+    pageContext.setAttribute("success", success);
+    pageContext.setAttribute("error", error);
 %>
 <j:json>
 {
+    "success": success,
+    "error": error
 }
 </j:json>

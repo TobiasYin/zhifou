@@ -32,7 +32,7 @@
                 map.put("topic_id", it.getId());
                 return map;
             }).collect(Collectors.toList()));
-            res.put("hasMore", start - end == answers.size());
+            res.put("hasMore", end - start == answers.size());
             res.put("data", answers.stream().map((it)->{
                 Map<String, Object> map = it.getFields();
                 map.remove("user");

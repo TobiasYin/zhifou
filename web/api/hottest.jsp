@@ -23,7 +23,7 @@
         }).collect(Collectors.toList());
         success = true;
         res.put("data", list);
-        res.put("hasMore", answers.size() == (start - end));
+        res.put("hasMore", answers.size() == (end - start));
     }else {
         success = false;
         res.put("error", "获取失败，位置错误");
