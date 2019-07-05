@@ -24,7 +24,7 @@ return表示返回的json的内容, 格式和send属性类似.
 
 示例:
 
-```
+```yaml
 url: /api/login
 method: post
 desc: 用于登陆的接口
@@ -40,7 +40,7 @@ return:
 
 ## 申请验证码
 
-```
+```yaml
 url: /api/get_captcha
 desc: 注册, 修改密码等页面需申请验证码, 直接返回图片格式. 可直接把api放入img的scr属性中.
 method: get
@@ -51,7 +51,7 @@ return_type: image/jpeg
 
 ## 注册
 
-```
+```yaml
 url: /api/register
 method: post
 desc: 注册接口, 需要前端验证两次输入的密码是否相等, 需申请验证码
@@ -66,7 +66,7 @@ return:
 
 ## 登陆
 
-```
+```yaml
 url: /api/login
 method: post
 desc: 用于登陆的接口
@@ -81,7 +81,7 @@ return:
 ## 修改密码
 
 
-```
+```yaml
 url: /api/change_password
 method: post
 desc: 修改密码
@@ -99,7 +99,7 @@ return:
 
 ## 判断是否登陆 (通过cookies)
 
-```
+```yaml
 url: /api/islogin
 method: get
 desc: 是否的登陆
@@ -111,7 +111,7 @@ return:
 
 ## 获取自己的信息
 
-```
+```yaml
 url: /api/self_info
 desc: 获取自己的信息, 主要用于header的展示.
 method: get
@@ -148,7 +148,7 @@ return:
 
 每一篇文章显示成这样的卡片, 建议抽离成一个vue组件. 分享功能直接复制链接实现. 取消感谢功能. 取消右边三个点. 如果前端判断发现author_id和当前登录的用户id相等, 需增加删除按钮, 删除的api见后文.
 
-```
+```yaml
 url: /api/newest
 method: get
 desc: 获取最新回答
@@ -176,7 +176,7 @@ return:
 ### 最热
 
 最热和最新具有基本相同的返回结果与请求方式, 不同的是, 最热返回的数据是赞同数和时间通过一定比例计算排序后的文章列表.
-```
+```yaml
 url: /api/hottest
 method: get
 desc: 获取最热回答
@@ -205,7 +205,7 @@ return:
 
 ## 删除回答
 
-```
+```yaml
 url: /api/delete_answer
 method: post
 desc: 删除回答
@@ -223,7 +223,7 @@ return:
 
 虽很多接口都返回用户头像url, 但为方便起见, 直接提供一个获取头像的api.
 
-```
+```yaml
 url: /api/get_head_sculpture
 method: get
 desc: 获取用户头像
@@ -237,7 +237,7 @@ return-type: image/jpeg
 
 在回答中,  按评论数量的按钮, 将会展示评论. 因为篇幅原因, 暂时不给评论提供点赞的功能.
 
-```
+```yaml
 url: /api/get_comment
 method: post
 desc: 获取指定回答的评论
@@ -257,7 +257,7 @@ return:
 ```
 
 ## 发表评论
-```
+```yaml
 url: /api/send_comment
 method: post
 desc: 发表评论
@@ -286,7 +286,7 @@ return:
 
 主要用于话题页面请求话题, 返回值排序方法按话题下回答数计算. 请求的数量依然按照最新最热相同规则获取.
 
-```
+```yaml
 url: /api/get_topics
 method: get
 desc: 返回所有话题的列表
@@ -316,7 +316,7 @@ return:
 
 
 
-```
+```yaml
 url: /api/topic
 method: get
 desc: 获取话题下的回答
@@ -350,7 +350,7 @@ return:
 
 主要用于搜索话题. 可以在发布问题添加话题时使用
 
-```
+```yaml
 url: /api/get_topic_by_name
 method: get
 desc: 返回含指定关键字的话题的列表
@@ -369,7 +369,7 @@ return: #返回格式类似上一个api
 
 此api为上传
 
-```
+```yaml
 url: /api/add_topic
 method: post
 ectype: multipart/form-data #使用此格式使上传话题能一并上传话题简介图
@@ -394,7 +394,7 @@ return:
 
 发布问题使用的api, 在问题发布时, 可以添加话题, 采用关键字搜索(上一个api)并选择的方式添加, 最多添加三个话题.
 
-```
+```yaml
 url: /api/add_question
 method: post
 desc: 发布问题
@@ -417,7 +417,7 @@ return:
 
 问题详情页每一个回答的组件可以复用主页的组件. 但应注意, 这里不会显示每一个回答的问题, 因为都是一样的.
 
-```
+```yaml
 url: /api/question
 method: get
 desc: 获取最热回答
@@ -452,7 +452,7 @@ return:
 
 ## 发表回答
 
-```
+```yaml
 url: /api/send_answer
 method: post
 desc: 发表回答
@@ -488,7 +488,7 @@ return:
 
 ### 用户元数据
 
-```
+```yaml
 url: /api/user
 method: get
 desc: 获取用户的数据
@@ -508,7 +508,7 @@ return:
 
 ### 用户回答
 
-```
+```yaml
 url: /api/user_answer
 method: get
 desc: 获取用户回答, 按时间排序
@@ -540,7 +540,7 @@ return:
 
 此栏较为简单. 有几个关注取消.
 
-```
+```yaml
 url: /api/user_ques
 method: get
 desc: 获取用户提问, 按时间排序
@@ -563,7 +563,7 @@ return:
 
 ## 关注
 
-```
+```yaml
 url: /api/follow
 method: post
 desc: 关注用户
@@ -578,7 +578,7 @@ return:
 
 ## 取消关注
 
-```
+```yaml
 url: /api/unfollow
 method: post
 desc: 取消关注用户
@@ -595,7 +595,7 @@ return:
 
 本页面的基本格式和最新最热类似, 区别是显示的回答都来自关注的人, 排序方式按最新发帖排序.
 
-```
+```yaml
 url: /api/follows
 method: get
 desc: 获取关注的人的回答
@@ -628,7 +628,7 @@ return:
 
 ![1561896427315](C:\Users\yrt19\AppData\Roaming\Typora\typora-user-images\1561896427315.png)
 
-```
+```yaml
 url: /api/get_followees
 method: get
 desc: 获取关注的人
@@ -653,7 +653,7 @@ return:
 
 格式和关注者列表类似, api也类似
 
-```
+```yaml
 url: /api/get_followers
 method: get
 desc: 获取粉丝
@@ -676,7 +676,7 @@ return:
 
 ## 设置个人简介
 
-```
+```yaml
 url: /api/set_self_intro
 method: post
 desc: 获取关注的人
@@ -690,7 +690,7 @@ return:
 
 ## 设置个人头像
 
-```
+```yaml
 url: /api/set_head
 method: post
 ectype: multipart/form-data #使用此格式使上传能上传头像
@@ -705,7 +705,7 @@ return:
 
 ## 赞同或反对
 
-```
+```yaml
 url: /api/agree
 method: post
 desc: 赞同, 反对
@@ -724,7 +724,7 @@ return:
 
 提醒主要是自己的问题被回答了, 以及自己的回答被评论了.
 
-```
+```yaml
 url: /api/get_tips
 method: get
 desc: 获取tips
@@ -755,7 +755,7 @@ return:
 
 返回类型类似主页渲染, 可复印组件, 关键词使用id="keywords"的span标签嵌套, 可增加其属性.
 
-```
+```yaml
 url: /api/search
 method: get
 desc: 搜索问题和答案
@@ -787,7 +787,7 @@ return:
 
 返回类似的页面,  课复用关注, 粉丝列表的组件
 
-```
+```yaml
 url: /api/search_user
 method: get
 desc: 搜索用户
@@ -813,7 +813,7 @@ return:
 
 ---
 
-更新N处Bug, 修复了一些不完善的地方.
+更新N处Bug, 修复了一些不完善的地方, 高亮了一下内容.
 
 By Tobias. yrt1999@163.com
 
