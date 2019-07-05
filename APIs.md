@@ -798,6 +798,7 @@ send:
 return:
 	success: bool
 	error: str #exist when success = false
+	hasMore: bool
 	data: list #list的每一个成员为一个用户的简介, 为一个dict:
 		username: str #返回用户名, 此属性包括以下属性都是success为true时才有
         userid: str #用户id
@@ -812,7 +813,7 @@ return:
 
 ---
 
-这是目前我所想到的api的主要内容, 有需要还可以增加, 修改, 删除.
+更新N处Bug, 修复了一些不完善的地方.
 
 By Tobias. yrt1999@163.com
 
