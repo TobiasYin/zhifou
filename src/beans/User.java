@@ -68,8 +68,33 @@ public class User implements Entity {
     }
 
     public static ArrayList<User> getUsersBySearch(String text, int start, int end){
-        //TODO add search function of user
+        try(Connection c = DataBasePool.getConnection();
+        PreparedStatement statement = c.prepareStatement("select id, name, introduce, head from user where name like ? limit ?")){
+            statement.setString(1, '%' + text + '%');
+            statement.setInt(2, end);
+            ResultSet res = statement.executeQuery();
+            ArrayList<User> users = new ArrayList<>();
+            int count = 0;
+            while (res.next()) {
+                if (count >= start) {
+                    initUser(res, users);
+                }
+                count++;
+            }
+            return users;
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
         return null;
+    }
+
+    private static void initUser(ResultSet res, ArrayList<User> users) throws SQLException {
+        String id = res.getString(1);
+        String name = res.getString(2);
+        String intro = res.getString(3);
+        String head = res.getString(4);
+        User u = new User(name, id, intro, head);
+        users.add(u);
     }
 
     public static User register(String username, String password) {
@@ -224,8 +249,7 @@ public class User implements Entity {
     }
 
     public int getAnswerCount() {
-        //TODO not implentent;
-        return 0;
+        return Answer.getAnswerCountByUser(this);
     }
 
     public int getFollowCount() {
@@ -267,12 +291,7 @@ public class User implements Entity {
         ResultSet res = s.executeQuery();
         ArrayList<User> ret = new ArrayList<>();
         while (res.next()) {
-            String id = res.getString(1);
-            String introduce = res.getString(2);
-            String head = res.getString(3);
-            String name = res.getString(4);
-            User u = new User(name, id, introduce, head);
-            ret.add(u);
+            initUser(res, ret);
         }
         return ret;
     }
@@ -305,6 +324,10 @@ public class User implements Entity {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    public boolean checkPassword(String pass){
+        return password.equals(pass);
     }
 
     //是否赞同一篇文章, 由于涉及两个实体, 在两个实体中提供相同方法.

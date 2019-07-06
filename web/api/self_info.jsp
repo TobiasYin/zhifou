@@ -1,4 +1,4 @@
-<%@ page import="beans.User"%><%@ page import="java.util.Map"%><%@ page import="java.util.HashMap"%><%@ page import="util.Json"%><%--
+<%@ page import="beans.User"%><%@ page import="java.util.Map"%><%@ page import="java.util.HashMap"%><%@ page import="util.Json"%><%@ page import="beans.Tip"%><%--
   Created by IntelliJ IDEA.
   User: yrt19
   Date: 2019/7/2
@@ -9,16 +9,12 @@
 <%
     boolean success;
     String error;
-    String username;
-    String userId;
-    String head;
-    int tips = 0;
-    int message = 0;
     User u = (User)request.getAttribute("user");
     Map<String, Object> res = new HashMap<>();
     if (u!=null){
         success = true;
         res.putAll(u.getFields());
+        res.put("tips", Tip.getTipsCount(u));
     }else {
         success = false;
         error = "需要登录!";

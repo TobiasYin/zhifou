@@ -65,6 +65,17 @@ public class Question implements Entity {
         connectDB(id);
     }
 
+    /**
+     * This constructor may cause problems, user only for search page!
+     * @param id id of ques
+     * @param title title of ques
+     * @author Tobias Yin
+     */
+    public Question(String id, String title){
+        this.id = id;
+        this.question = title;
+    }
+
     public static Question addQuestion(User u, String question, String content) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("insert into question(id, question, content, user_id) values(?, ?, ?, ?)");

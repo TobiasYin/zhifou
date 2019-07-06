@@ -16,6 +16,7 @@ public class Answer implements Entity {
     private Timestamp time;
     private Question question;
     private User user;
+    private int agreeCount = -1;
 
     public Answer(String id) {
         connectDB(id);
@@ -55,6 +56,7 @@ public class Answer implements Entity {
     }
 
     public int getAgreeCount() {
+        if (agreeCount != -1) return agreeCount;
         int agree = 0;
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement statement = c.prepareStatement("select count(agree) from agree where answer_id = ? and agree = true")) {
@@ -157,8 +159,36 @@ public class Answer implements Entity {
         return false;
     }
 
-    public static ArrayList<Answer> getAnswersBySearch(String text, int start, int end){
-        //TODO add Search function of answer.
+    public static ArrayList<Answer> getAnswersBySearch(String text, int start, int end) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement statement = c.prepareStatement("select id, question_id, user_id, content, time, qusetion_title , agrees from (select answer.id, answer.question_id, answer.user_id, answer.content, answer.time , q.question as qusetion_title from answer join question q on answer.question_id = q.id where q.content like ? or answer.content like ?) as ans natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
+            statement.setString(1, '%' + text + '%');
+            statement.setString(2, '%' + text + '%');
+            statement.setInt(3, end);
+            ArrayList<Answer> answers = new ArrayList<>();
+            ResultSet res = statement.executeQuery();
+            int count = 0;
+            while (res.next()) {
+                if(count >= start) {
+                    String id = res.getString(1);
+                    String question_id = res.getString(2);
+                    String user_id = res.getString(3);
+                    String content = res.getString(4);
+                    Timestamp time = res.getTimestamp(5);
+                    String question_title = res.getString(6);
+                    int agrees = res.getInt(7);
+                    Question question = new Question(question_id, question_title);
+                    User user = User.getById(user_id);
+                    Answer answer = new Answer(id, user_id, question_id, content, time, question, user);
+                    answer.agreeCount = agrees;
+                    answers.add(answer);
+                }
+                count++;
+            }
+            return answers;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 
@@ -195,7 +225,22 @@ public class Answer implements Entity {
     public static ArrayList<Answer> getHottestAnswers(int start, int end) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time, agrees from answer natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
-            return getAnswersList(start, end, s);
+            s.setInt(1, end);
+            ResultSet res = s.executeQuery();
+            int count = 0;
+            ArrayList<Answer> answers = new ArrayList<>();
+            while (res.next()) {
+                if (start > count) {
+                    count++;
+                    continue;
+                }
+                Answer item = initAnswer(res);
+                item.user = User.getById(item.user_id);
+                item.question = new Question(item.question_id);
+                item.agreeCount = res.getInt(6);
+                answers.add(item);
+            }
+            return answers;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -253,6 +298,22 @@ public class Answer implements Entity {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public static int getAnswerCountByUser(User u) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("select count(*) from answer where user_id = ?")) {
+            s.setString(1, u.getId());
+            ResultSet result = s.executeQuery();
+            int count = 0;
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+            return count;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return -1;
     }
 
 
@@ -363,6 +424,7 @@ public class Answer implements Entity {
     }
 
     public Question getQuestion() {
+        if (question == null) return new Question(question_id);
         return question;
     }
 
