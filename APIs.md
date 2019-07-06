@@ -726,7 +726,7 @@ return:
 
 ```yaml
 url: /api/get_tips
-method: get
+method: get	
 desc: 获取tips
 login: true
 return: 
