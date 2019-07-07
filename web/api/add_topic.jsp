@@ -8,14 +8,15 @@
 <%@ taglib prefix="j" uri="json.tag" %>
 <%
     boolean success;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     Map<String, Object> res = new HashMap<>();
     User self = (User)request.getAttribute("user");
     if (self == null){
         success = false;
         res.put("error", "登陆才能发布话题");
     }else {
-        String topic_name = request.getParameter("topic_name");
-        String topic_desc = request.getParameter("topic_desc");
+        String topic_name = (String) data.get("topic_name");
+        String topic_desc = (String) data.get("topic_desc");
         Part part = request.getPart("topic_pic");
         if (part.getContentType().equals("image/png") || part.getContentType().equals("image/jpeg")){
             String path = ((ServletContext)jspContext).getRealPath("/image/user_head/");

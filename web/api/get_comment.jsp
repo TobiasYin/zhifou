@@ -8,7 +8,8 @@
 <%@ taglib prefix="j" uri="json.tag" %>
 <%
     boolean success;
-    String answer_id = request.getParameter("answer_id");
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
+    String answer_id = (String) data.get("answer_id");
     Answer answer = new Answer(answer_id);
     Map<String , Object> res = new HashMap<>();
     if (answer.getId() == null){

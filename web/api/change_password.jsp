@@ -8,10 +8,11 @@
 <%
     boolean success;
     Map<String, Object> res = new HashMap<>();
-    String username = request.getParameter("username");
-    String password = request.getParameter("old_password");
-    String new_pass = request.getParameter("new_password");
-    String captcha = request.getParameter("captcha");
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
+    String username = (String) data.get("username");
+    String password = (String) data.get("old_password");
+    String new_pass = (String) data.get("new_password");
+    String captcha = (String) data.get("captcha");
     User self = (User)request.getAttribute("user");
     String realcaptcha = (String) session.getAttribute("captcha");
     if (self == null){

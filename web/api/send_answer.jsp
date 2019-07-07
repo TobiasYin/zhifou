@@ -8,9 +8,10 @@
 <%@ taglib prefix="j" uri="json.tag" %>
 <%
     boolean success;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     User u = (User)request.getAttribute("user");
-    String question_id = request.getParameter("question_id");
-    String content = request.getParameter("content");
+    String question_id = (String) data.get("question_id");
+    String content = (String) data.get("content");
     Map<String, Object> res = new HashMap<>();
     if (u == null){
         res.put("error", "登陆才能发表文章");

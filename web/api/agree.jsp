@@ -8,9 +8,10 @@
 <%@ taglib prefix="j" uri="json.tag" %>
 <%
     boolean success;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     Map<String, Object> map = new HashMap<>();
-    String answer_id = request.getParameter("answer_id");
-    int agree = Integer.parseInt(request.getParameter("agree"));
+    String answer_id = (String) data.get("answer_id");
+    int agree = Integer.parseInt((String) data.get("agree"));
     User self = (User)request.getAttribute("user");
     if (self == null){
         success = false;

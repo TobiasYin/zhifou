@@ -7,10 +7,11 @@
 <%@ page contentType="application/json;charset=UTF-8" language="java" %>
 <%
     boolean success;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     User self = (User)request.getAttribute("user");
-    String answer_id = request.getParameter("answer_id");
-    String refer = request.getParameter("refer");
-    String content = request.getParameter("content");
+    String answer_id = (String) data.get("answer_id");
+    String refer = (String) data.get("refer");
+    String content = (String) data.get("content");
     Map<String ,Object> res = new HashMap<>();
     if (self == null){
         success = false;

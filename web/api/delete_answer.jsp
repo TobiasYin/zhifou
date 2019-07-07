@@ -1,4 +1,4 @@
-<%@ page import="beans.User"%><%@ page import="beans.Answer"%><%--
+<%@ page import="beans.User"%><%@ page import="beans.Answer"%><%@ page import="util.Json"%><%@ page import="java.util.Map"%><%--
   Created by IntelliJ IDEA.
   User: Tobias
   Date: 2019/7/4
@@ -8,7 +8,8 @@
 <%@ taglib prefix="j" uri="json.tag" %>
 <%
     User self = (User)request.getAttribute("user");
-    String id = request.getParameter("answer_id");
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
+    String id = (String) data.get("answer_id");
     Answer answer = new Answer(id);
     boolean success;
     String error = "";

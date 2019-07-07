@@ -216,8 +216,8 @@ public class Question implements Entity {
         return false;
     }
 
-    public boolean setTopics(String[] topics) {
-        if (topics.length + getTopics().size() > 3)
+    public boolean setTopics(ArrayList<String> topics) {
+        if (topics.size() + getTopics().size() > 3)
             return false;
         for (String tid :topics){
             Topic topic = new Topic(tid);

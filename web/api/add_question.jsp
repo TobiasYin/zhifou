@@ -1,4 +1,4 @@
-<%@ page import="beans.User"%><%@ page import="java.util.Map"%><%@ page import="java.util.HashMap"%><%@ page import="beans.Question"%><%@ page import="util.Json"%><%--
+<%@ page import="beans.User"%><%@ page import="java.util.Map"%><%@ page import="java.util.HashMap"%><%@ page import="beans.Question"%><%@ page import="util.Json"%><%@ page import="java.lang.reflect.Array"%><%@ page import="java.util.ArrayList"%><%--
   Created by IntelliJ IDEA.
   User: Tobias
   Date: 2019/7/4
@@ -7,10 +7,11 @@
 <%@ page contentType="application/json;charset=UTF-8" language="java" %>
 <%
     boolean success;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     User u = (User)request.getAttribute("user");
-    String question_title = request.getParameter("question");
-    String question_desc = request.getParameter("question_desc");
-    String[] topics = request.getParameterValues("topics[]");
+    String question_title = (String) data.get("question");
+    String question_desc = (String) data.get("question_desc");
+    ArrayList<String> topics = (ArrayList<String>) data.get("topics");
     Map<String, Object> res = new HashMap<>();
     if (u == null){
         res.put("error", "登陆才能发表文章");

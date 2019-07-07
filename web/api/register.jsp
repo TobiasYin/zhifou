@@ -1,4 +1,4 @@
-<%@ page import="beans.User"%><%--
+<%@ page import="beans.User"%><%@ page import="java.util.Map"%><%@ page import="util.Json"%><%--
   Created by IntelliJ IDEA.
   User: yrt19
   Date: 2019/7/2
@@ -9,13 +9,14 @@
 <%
     boolean success;
     String error;
+    Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     if(request.getAttribute("user")!=null){
         success = false;
         error = "已登录不能注册!";
     }else {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String captcha = request.getParameter("captcha");
+        String username = (String) data.get("username");
+        String password = (String) data.get("password");
+        String captcha = (String) data.get("captcha");
         String realcaptcha = (String) session.getAttribute("captcha");
         if (!realcaptcha.toLowerCase().equals(captcha.toLowerCase())){
             success = false;
