@@ -3,6 +3,9 @@ package util;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspContext;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -40,6 +43,29 @@ public class Json {
             sb.append('"');
         }
         sb.append(",");
+    }
+
+    public static Map fromReaderGetMap(Reader r) throws ParseException{
+        try(
+        BufferedReader reader = new BufferedReader(r);) {
+            StringBuilder res = new StringBuilder();
+            while (reader.ready()) {
+                res.append(reader.readLine());
+            }
+            return fromStringGetMap(res.toString());
+        }catch (IOException ex){
+            ex.printStackTrace();
+            throw new ParseException("Error",1);
+        }
+    }
+
+    public static Map fromStringGetMap(String s) throws ParseException{
+        Json j = new Json(null, s);
+        Object obj = j.fromString(s);
+        if (obj instanceof Map)
+            return (Map<String, Object>)obj;
+        else
+            return null;
     }
 
     private static String getMapJson(Map m) {

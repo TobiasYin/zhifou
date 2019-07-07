@@ -36,4 +36,6 @@ select id, question_id, user_id, content, time, qusetion_title, question_content
 
 select id, question_id, user_id, content, time, qusetion_title, question_content, q_user_id, q_time , agrees from (select answer.id, answer.question_id, answer.user_id, answer.content, answer.time , q.question as qusetion_title, q.content as question_content, q.user_id as q_user_id, q.time as q_time from answer join question q on answer.question_id = q.id where q.content like ? or answer.content like ?) as ans natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?;
 
-select * from user where name like '%bi%'
+select * from user where name like '%bi%';
+
+select * from user
