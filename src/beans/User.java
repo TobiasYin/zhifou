@@ -67,22 +67,22 @@ public class User implements Entity {
         this.head = head;
     }
 
-    public static ArrayList<User> getUsersBySearch(String text, int start, int end){
-        try(Connection c = DataBasePool.getConnection();
-        PreparedStatement statement = c.prepareStatement("select id, name, introduce, head from user where name like ? limit ?")){
+    public static ArrayList<User> getUsersBySearch(String text) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement statement = c.prepareStatement("select id, name, introduce, head from user where name like ?")) {
             statement.setString(1, '%' + text + '%');
-            statement.setInt(2, end);
+//            statement.setInt(2, end);
             ResultSet res = statement.executeQuery();
             ArrayList<User> users = new ArrayList<>();
-            int count = 0;
+//            int count = 0;
             while (res.next()) {
-                if (count >= start) {
+//                if (count >= start) {
                     initUser(res, users);
-                }
-                count++;
+//                }
+//                count++;
             }
             return users;
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
@@ -157,7 +157,7 @@ public class User implements Entity {
     public String getIntro() {
         if (intro != null)
             return intro;
-        else return "用户很懒, 还没有添加自我介绍哟~";
+        else return "用户很懒, 还没有自我介绍哟~";
     }
 
     public boolean setIntro(String intro) {
@@ -268,7 +268,7 @@ public class User implements Entity {
 
     public ArrayList<User> getFollowees() {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, introduce, head, name from user where id in (select followed_id from follow where follow_id = ?)")) {
+             PreparedStatement s = c.prepareStatement("select id, name, introduce, head from user where id in (select followed_id from follow where follow_id = ?)")) {
             return getUsers(s);
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -278,7 +278,7 @@ public class User implements Entity {
 
     public ArrayList<User> getFollowers() {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, introduce, head, name from user where id in (select follow_id from follow where followed_id = ?)")) {
+             PreparedStatement s = c.prepareStatement("select id, name, introduce, head from user where id in (select follow_id from follow where followed_id = ?)")) {
             return getUsers(s);
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -326,7 +326,7 @@ public class User implements Entity {
         return false;
     }
 
-    public boolean checkPassword(String pass){
+    public boolean checkPassword(String pass) {
         return password.equals(pass);
     }
 
@@ -335,14 +335,15 @@ public class User implements Entity {
         return answer.isAgree(this);
     }
 
-    public boolean agree(Answer answer){
+    public boolean agree(Answer answer) {
         return answer.agree(this);
     }
 
-    public boolean disagree(Answer answer){
+    public boolean disagree(Answer answer) {
         return answer.disAgree(this);
     }
-    public boolean cancelAgree(Answer answer){
+
+    public boolean cancelAgree(Answer answer) {
         return answer.cancelAgree(this);
     }
 

@@ -47,12 +47,12 @@ public class EntityTest {
             u1.unfollow(u1);
         }
         ArrayList<Question> questions = new ArrayList<>();
-        for (int i = 0; i < users.size() / 10; i++) {
+        for (int i = 0; i < users.size() * 5; i++) {
             questions.add(Question.addQuestion(users.get(r.nextInt(users.size())), "问题标题" +  GetCaptcha.GetRandomString(10), "问题描述" + GetCaptcha.GetRandomString(100)));
         }
 
         ArrayList<Answer> answers = new ArrayList<>();
-        for (int i = 0; i <  users.size() / 3; i++) {
+        for (int i = 0; i <  users.size() * 10; i++) {
             answers.add(Answer.addAnswer(questions.get(r.nextInt(questions.size())), users.get(r.nextInt(users.size())), "回答详情" + GetCaptcha.GetRandomString(1000)));
         }
 

@@ -638,7 +638,7 @@ return:
 	success: bool
 	error: str #exist when success = false
 	data: list #list的每一个成员为一个用户的简介, 为一个dict:
-		username: str #返回用户名, 此属性包括以下属性都是success为true时才有
+        username: str #返回用户名, 此属性包括以下属性都是success为true时才有
         userid: str #用户id
         head_sculpture: str #头像的url, 可直接放入img的src中
         intro: str #用户的简介
@@ -793,12 +793,9 @@ method: get
 desc: 搜索用户
 send: 
 	text: str #搜索的句子
-	start: int
-	end: int
 return:
 	success: bool
 	error: str #exist when success = false
-	hasMore: bool
 	data: list #list的每一个成员为一个用户的简介, 为一个dict:
 		username: str #返回用户名, 此属性包括以下属性都是success为true时才有
         userid: str #用户id

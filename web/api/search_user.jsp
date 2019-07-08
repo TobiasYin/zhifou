@@ -9,16 +9,16 @@
     User self = (User) request.getAttribute("user");
     boolean success;
     String text= request.getParameter("text");
-    int start = Integer.parseInt(request.getParameter("start"));
-    int end = Integer.parseInt(request.getParameter("end"));
-    ArrayList<User> users = User.getUsersBySearch(text, start, end);
+//    int start = Integer.parseInt(request.getParameter("start"));
+//    int end = Integer.parseInt(request.getParameter("end"));
+    ArrayList<User> users = User.getUsersBySearch(text);
     Map<String, Object> res = new HashMap<>();
     if (users == null){
         res.put("error", "发生未知错误");
         success = false;
     }else {
         success = true;
-        res.put("hasMore", end -start == users.size());
+//        res.put("hasMore", end -start == users.size());
         res.put("data", users.stream().map((it)->{
             Map<String, Object> map = it.getFields();
             map.put("answer_count", it.getAnswerCount());

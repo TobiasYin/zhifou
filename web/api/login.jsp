@@ -15,10 +15,6 @@
         Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
         String username = (String)data.get("username");
         String password = (String)data.get("password");
-        System.out.println("para");
-        for (Object m:data.keySet()){
-            System.out.println(m + "--->" + data.get(m));
-        }
         User user = User.login(username, password);
         if (user == null){
             success = false;

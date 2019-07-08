@@ -18,7 +18,7 @@
         String password = (String) data.get("password");
         String captcha = (String) data.get("captcha");
         String realcaptcha = (String) session.getAttribute("captcha");
-        if (!realcaptcha.toLowerCase().equals(captcha.toLowerCase())){
+        if (captcha == null || !realcaptcha.toLowerCase().equals(captcha.toLowerCase())){
             success = false;
             error = "验证码错误";
         }else {
@@ -27,6 +27,7 @@
             error = u.getMessage();
         }
     }
+    session.removeAttribute("captcha");
     pageContext.setAttribute("success", success);
     pageContext.setAttribute("error", error);
 %>

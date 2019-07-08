@@ -11,7 +11,7 @@
     Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
     Map<String, Object> map = new HashMap<>();
     String answer_id = (String) data.get("answer_id");
-    int agree = Integer.parseInt((String) data.get("agree"));
+    int agree = (Integer)data.get("agree");
     User self = (User)request.getAttribute("user");
     if (self == null){
         success = false;

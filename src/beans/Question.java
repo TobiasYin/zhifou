@@ -22,17 +22,17 @@ public class Question implements Entity {
         System.out.println(question);
     }
 
-    public static ArrayList<Question> getQuestionsByTopic(Topic t){
+    public static ArrayList<Question> getQuestionsByTopic(Topic t) {
         ArrayList<Question> ret = new ArrayList<>();
-        try(Connection c = DataBasePool.getConnection();
-        PreparedStatement s = c.prepareStatement("select question_id from ques_topic where  topic_id = ?")) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("select question_id from ques_topic where  topic_id = ?")) {
             s.setString(1, t.getId());
             ResultSet res = s.executeQuery();
-            while (res.next()){
+            while (res.next()) {
                 String id = res.getString(1);
                 ret.add(new Question(id));
             }
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return ret;
@@ -67,11 +67,12 @@ public class Question implements Entity {
 
     /**
      * This constructor may cause problems, user only for search page!
-     * @param id id of ques
+     *
+     * @param id    id of ques
      * @param title title of ques
      * @author Tobias Yin
      */
-    public Question(String id, String title){
+    public Question(String id, String title) {
         this.id = id;
         this.question = title;
     }
@@ -170,8 +171,10 @@ public class Question implements Entity {
     }
 
 
-    public Timestamp getTime() {
-        return time;
+    public long getTime() {
+        if (time == null)
+            return System.currentTimeMillis() / 1000;
+        return time.getTime();
     }
 
     public ArrayList<Topic> getTopics() {
@@ -185,8 +188,9 @@ public class Question implements Entity {
         res.put("user_id", user_id);
         res.put("question_title", question);
         res.put("question_desc", content);
-        res.put("time", time.getTime());
-        res.put("user", user.getFields());
+        res.put("time", getTime());
+        if (user != null)
+            res.put("user", user.getFields());
         return res;
     }
 
@@ -197,20 +201,20 @@ public class Question implements Entity {
                 ",\"user_id\":\"" + user_id + '"' +
                 ",\"question:\"" + question + '"' +
                 ",\"content:\"" + content + '"' +
-                ",\"time:" + time.getTime() +
+                ",\"time:" + getTime() +
                 ",\"user:" + user +
                 '}';
     }
 
-    private boolean addTopic(Topic topics){
-        try(Connection c = DataBasePool.getConnection();
-        PreparedStatement s = c.prepareStatement("insert into ques_topic(question_id, topic_id) values (?, ?)")) {
+    private boolean addTopic(Topic topics) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("insert into ques_topic(question_id, topic_id) values (?, ?)")) {
             s.setString(1, id);
             s.setString(2, topics.getId());
-            if (s.executeUpdate() == 1){
+            if (s.executeUpdate() == 1) {
                 return true;
             }
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return false;
@@ -219,10 +223,10 @@ public class Question implements Entity {
     public boolean setTopics(ArrayList<String> topics) {
         if (topics.size() + getTopics().size() > 3)
             return false;
-        for (String tid :topics){
+        for (String tid : topics) {
             Topic topic = new Topic(tid);
-            if (topic.getId()!=null){
-                if(!addTopic(topic)) return false;
+            if (topic.getId() != null) {
+                if (!addTopic(topic)) return false;
             }
         }
         return true;

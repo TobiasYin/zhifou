@@ -5,6 +5,7 @@ import util.GetUUID;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -169,7 +170,7 @@ public class Answer implements Entity {
             ResultSet res = statement.executeQuery();
             int count = 0;
             while (res.next()) {
-                if(count >= start) {
+                if (count >= start) {
                     String id = res.getString(1);
                     String question_id = res.getString(2);
                     String user_id = res.getString(3);
@@ -251,6 +252,7 @@ public class Answer implements Entity {
     public static ArrayList<Answer> getNewestAnswers(int start, int end) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer order by time desc limit ?")) {
+            s.setInt(1, end);
             return getAnswersList(start, end, s);
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -259,7 +261,6 @@ public class Answer implements Entity {
     }
 
     private static ArrayList<Answer> getAnswersList(int start, int end, PreparedStatement s) throws SQLException {
-        s.setInt(1, end);
         ResultSet res = s.executeQuery();
         int count = 0;
         ArrayList<Answer> answers = new ArrayList<>();
@@ -389,7 +390,7 @@ public class Answer implements Entity {
         res.put("answer_content", content);
         res.put("agree_count", getAgreeCount());
         res.put("comment_count", getCommentCount());
-        res.put("time", time.getTime());
+        res.put("time", getTime());
         res.put("user", user.getFields());
         return res;
     }
@@ -402,7 +403,7 @@ public class Answer implements Entity {
                 ",\"user_id\":\"" + user_id + '"' +
                 ",\"question:\"" + question + '"' +
                 ",\"content:\"" + content + '"' +
-                ",\"time:" + time.getTime() +
+                ",\"time:" + getTime() +
                 ",\"user:" + user +
                 '}';
     }
@@ -419,8 +420,10 @@ public class Answer implements Entity {
         return content;
     }
 
-    public Timestamp getTime() {
-        return time;
+    public long getTime() {
+        if (time == null)
+            return System.currentTimeMillis() / 1000000;
+        return time.getTime();
     }
 
     public Question getQuestion() {

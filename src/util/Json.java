@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 public class Json {
     private static final Pattern listOrDict = Pattern.compile("^(\\[(.*?,?)*])|(\\{(([\"'].*?[\"']):(.*?),?)*})$");
     private static final Pattern pair = Pattern.compile("([\"'](.*?)[\"']):((\\[.*?])|(\\{.*?})|(.*?),|(.*)})");
-    private static final Pattern numBoolStr = Pattern.compile("^(\\d+(.\\d+)?)|(true|false)|([\"'](.*)[\"'])|(.+)$");
+    private static final Pattern numBoolStr = Pattern.compile("^([-+]?\\d+(.\\d+)?)|(true|false)|([\"'](.*)[\"'])|(.+)$");
     private static final Pattern str = Pattern.compile("^([\"'](.*)[\"'])$");
-
+    
     /**
      * @param c is a Collection or Map, or will throw IllegalArgumentException
      * @return jsonifiy string
@@ -45,25 +45,24 @@ public class Json {
         sb.append(",");
     }
 
-    public static Map fromReaderGetMap(Reader r) throws ParseException{
-        try(
-        BufferedReader reader = new BufferedReader(r);) {
+    public static Map fromReaderGetMap(Reader r) throws ParseException {
+        try (BufferedReader reader = new BufferedReader(r)) {
             StringBuilder res = new StringBuilder();
             while (reader.ready()) {
                 res.append(reader.readLine());
             }
             return fromStringGetMap(res.toString());
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
-            throw new ParseException("Error",1);
+            throw new ParseException("Error", 1);
         }
     }
 
-    public static Map fromStringGetMap(String s) throws ParseException{
+    public static Map fromStringGetMap(String s) throws ParseException {
         Json j = new Json(null, s);
         Object obj = j.fromString(s);
         if (obj instanceof Map)
-            return (Map<String, Object>)obj;
+            return (Map<String, Object>) obj;
         else
             return null;
     }
@@ -89,7 +88,8 @@ public class Json {
         for (Object item : m) {
             add(sb, item);
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if (m.size() != 0)
+            sb.deleteCharAt(sb.length() - 1);
         sb.append("]");
         return sb.toString();
     }
