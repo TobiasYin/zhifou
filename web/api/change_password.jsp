@@ -9,15 +9,11 @@
     boolean success;
     Map<String, Object> res = new HashMap<>();
     Map<String, Object> data = Json.fromReaderGetMap(request.getReader());
-    String username = (String) data.get("username");
     String password = (String) data.get("old_password");
     String new_pass = (String) data.get("new_password");
     String captcha = (String) data.get("captcha");
     User self = (User)request.getAttribute("user");
     String realcaptcha = (String) session.getAttribute("captcha");
-    if (self == null){
-        self = User.login(username, password);
-    }
     if (!realcaptcha.toLowerCase().equals(captcha.toLowerCase())){
             success = false;
             res.put("error", "验证码错误");
@@ -32,12 +28,12 @@
         success = false;
     }else {
         success = true;
-    }
-    if (self!=null){
-        for(Cookie c: request.getCookies()){
-            if (c.getName().equals("username") || c.getName().equals("id")){
-                c.setMaxAge(0);
-                response.addCookie(c);
+        if (self!=null){
+            for(Cookie c: request.getCookies()){
+                if (c.getName().equals("username") || c.getName().equals("id")){
+                    c.setMaxAge(0);
+                    response.addCookie(c);
+                }
             }
         }
     }

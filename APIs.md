@@ -87,7 +87,6 @@ method: post
 desc: 修改密码
 login: true #登录才能修改密码
 send:
-	username: str
 	old_password: str
 	new_password: str
 	captcha: str  #修改密码前需获取验证码
