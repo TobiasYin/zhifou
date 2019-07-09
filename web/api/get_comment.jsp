@@ -17,13 +17,18 @@
         success = false;
     }else {
         ArrayList<Comment> comments = Comment.getCommentsByAnswer(answer);
-        res.put("data", comments.stream().map((it)->{
-            Map<String, Object> map = it.getFields();
-            map.remove("user");
-            map.remove("answer");
-            return map;
-        }).collect(Collectors.toList()));
-        success = true;
+        if (comments == null){
+            success = false;
+            res.put("error", "发生未知错误");
+        }else {
+            res.put("data", comments.stream().map((it)->{
+                Map<String, Object> map = it.getFields();
+                map.remove("user");
+                map.remove("answer");
+                return map;
+            }).collect(Collectors.toList()));
+            success = true;
+        }
     }
     res.put("success",success);
     out.print(Json.fromCollection(res));

@@ -44,6 +44,19 @@ public class Tip implements Entity {
         return 0;
     }
 
+    public boolean read() {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement read = c.prepareStatement("update tips set is_read = true where id = ?")) {
+            read.setInt(1, id);
+            if (read.executeUpdate() == 1) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
     public static ArrayList<Tip> getTips(User u) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select type, id, other_user_id, action_name, question_id, answer_id, comment_id, other_comment_id, is_read from tips where user_id = ?");
@@ -106,7 +119,7 @@ public class Tip implements Entity {
                 break;
             case AGREE:
                 res.put("answer_id", answer.getId());
-                 q = answer.getQuestion();
+                q = answer.getQuestion();
                 res.put("question_id", q.getId());
                 res.put("question_title", q.getQuestion());
                 break;
@@ -126,6 +139,6 @@ public class Tip implements Entity {
                 res.put("question_title", q.getQuestion());
                 break;
         }
-        return null;
+        return res;
     }
 }

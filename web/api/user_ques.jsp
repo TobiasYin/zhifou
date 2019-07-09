@@ -28,7 +28,7 @@
                 Map<String, Object> map = new HashMap<>();
                 map.put("question_id", it.getId());
                 map.put("question_title", it.getQuestion());
-                map.put("time", it.getTime().getTime());
+                map.put("time", it.getTime());
                 map.put("answer_count", it.getAnswerCount());
                 return map;
             }).collect(Collectors.toList()));

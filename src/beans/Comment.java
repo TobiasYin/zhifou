@@ -5,6 +5,7 @@ import util.GetUUID;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class Comment implements Entity {
                 s1.setString(3, answer.getId());
                 s1.setString(4, content);
                 s1.setString(5, refer.getId());
-                comment.refer_id = refer.getRefer_id();
+                comment.refer_id = refer.getId();
                 comment.refer = refer;
                 s = s1;
             }
@@ -84,8 +85,9 @@ public class Comment implements Entity {
                 comment.content = content;
                 comment.answer = answer;
                 comment.user = user;
+                comment.user_id = user.getId();
                 comment.answer_id = answer.getId();
-                comment.time = Timestamp.valueOf(String.valueOf(System.currentTimeMillis() / 1000));
+                comment.time = new Timestamp(System.currentTimeMillis());
                 return comment;
             }
         } catch (SQLException ex) {
@@ -95,9 +97,9 @@ public class Comment implements Entity {
     }
 
     public static ArrayList<Comment> getCommentsByAnswer(Answer answer) {
-        ArrayList<Comment> ret = new ArrayList<>();
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select id, user_id, answer_id, content, refer, time from comment where answer_id = ?")) {
+             PreparedStatement s = c.prepareStatement("select id, user_id, answer_id, content, refer, time from comment where answer_id = ? order by time desc;")) {
+            ArrayList<Comment> ret = new ArrayList<>();
             s.setString(1, answer.getId());
             ResultSet res = s.executeQuery();
             while (res.next()) {
@@ -110,11 +112,13 @@ public class Comment implements Entity {
                 com.time = res.getTimestamp(6);
                 com.answer = answer;
                 com.user = User.getById(com.user_id);
+                ret.add(com);
             }
+            return ret;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return ret;
+        return null;
     }
 
     public String getId() {
@@ -165,7 +169,7 @@ public class Comment implements Entity {
         res.put("answer_id", answer_id);
         res.put("content", content);
         res.put("refer", refer_id);
-        res.put("time", time.getTime());
+        res.put("time", time.getTime() - 8 * 3600 * 1000);
         res.put("user", user.getFields());
         res.put("answer", answer.getFields());
         return res;

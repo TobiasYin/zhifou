@@ -107,6 +107,33 @@ public class Question implements Entity {
         return null;
     }
 
+    public static ArrayList<Question> getQuestions(int start, int end){
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("select id, question, content, user_id, time from question  order by time desc limit ?")) {
+            s.setInt(1, end);
+            ArrayList<Question> res = new ArrayList<>();
+            ResultSet result = s.executeQuery();
+            int counter = 0;
+            while (result.next()) {
+                if (counter >= start) {
+                    Question item = new Question();
+                    item.id = result.getString(1);
+                    item.question = result.getString(2);
+                    item.content = result.getString(3);
+                    item.user_id = result.getString(4);
+                    item.user = User.getById(item.user_id);
+                    item.time = result.getTimestamp(5);
+                    res.add(item);
+                }
+                counter++;
+            }
+            return res;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static ArrayList<Question> getQuestionsByUser(User u, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question, content, user_id, time from question where user_id = ? order by time desc limit ?")) {
@@ -174,10 +201,11 @@ public class Question implements Entity {
     public long getTime() {
         if (time == null)
             return System.currentTimeMillis() / 1000;
-        return time.getTime();
+        return time.getTime() - 8 * 3600 * 1000;
     }
 
     public ArrayList<Topic> getTopics() {
+        if (topics == null) return new ArrayList<>();
         return topics;
     }
 

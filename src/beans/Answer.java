@@ -162,10 +162,11 @@ public class Answer implements Entity {
 
     public static ArrayList<Answer> getAnswersBySearch(String text, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement statement = c.prepareStatement("select id, question_id, user_id, content, time, qusetion_title , agrees from (select answer.id, answer.question_id, answer.user_id, answer.content, answer.time , q.question as qusetion_title from answer join question q on answer.question_id = q.id where q.content like ? or answer.content like ?) as ans natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
+             PreparedStatement statement = c.prepareStatement("select id, question_id, user_id, content, time, qusetion_title , agrees from (select answer.id, answer.question_id, answer.user_id, answer.content, answer.time , q.question as qusetion_title from answer join question q on answer.question_id = q.id where q.content like ? or answer.content like ? or q.question like ?) as ans natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
             statement.setString(1, '%' + text + '%');
             statement.setString(2, '%' + text + '%');
-            statement.setInt(3, end);
+            statement.setString(3, '%' + text + '%');
+            statement.setInt(4, end);
             ArrayList<Answer> answers = new ArrayList<>();
             ResultSet res = statement.executeQuery();
             int count = 0;
@@ -342,6 +343,31 @@ public class Answer implements Entity {
         return null;
     }
 
+    public static ArrayList<Answer> getAnswersByTopic(Topic t, int start, int end) {
+        try (Connection c = DataBasePool.getConnection();
+             PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time from answer where question_id in (select question_id from ques_topic where topic_id = ?) order by time desc limit ?")) {
+            s.setString(1, t.getId());
+            s.setInt(2, end);
+            ArrayList<Answer> res = new ArrayList<>();
+            ResultSet result = s.executeQuery();
+            int count = 0;
+            while (result.next()) {
+                if (count >= start) {
+                    Answer item = initAnswer(result);
+                    item.user = User.getById(item.user_id);
+                    item.question = new Question(item.question_id);
+                    res.add(item);
+                }
+                count++;
+            }
+            return res;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
     public static ArrayList<Answer> getFollowingsAnswersList(User u, int start, int end) {
         try (Connection c = DataBasePool.getConnection();
              PreparedStatement s = c.prepareStatement("select id, question_id, user_id, content, time, agrees from (select id, question_id, user_id, content, time from answer where user_id in (select followed_id from follow where follow_id = ?)) as A natural join (select count(*) as agrees, answer_id as id from agree group by answer_id) as f order by agrees - (now() - time)  / 1800 desc limit ?")) {
@@ -422,8 +448,8 @@ public class Answer implements Entity {
 
     public long getTime() {
         if (time == null)
-            return System.currentTimeMillis() / 1000000;
-        return time.getTime();
+            return System.currentTimeMillis() / 1000;
+        return time.getTime() - 8 * 3600 * 1000;
     }
 
     public Question getQuestion() {

@@ -182,11 +182,12 @@ public class Topic implements Entity {
     public Map<String, Object> getFields() {
         Map<String, Object> res = new HashMap<>();
         res.put("topic_id", id);
-        res.put("head", head);
+        res.put("head", getHead());
+        res.put("topic_pic", getHead());
         res.put("topic_name", topic);
         res.put("topic", topic);
         res.put("description", desc);
-        return null;
+        return res;
     }
 
     public String getId() {
