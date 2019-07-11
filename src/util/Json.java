@@ -16,7 +16,7 @@ public class Json {
     private static final Pattern pair = Pattern.compile("([\"'](.*?)[\"']):((\\[.*?])|(\\{.*?})|(.*?),|(.*)})");
     private static final Pattern numBoolStr = Pattern.compile("^([-+]?\\d+(.\\d+)?)|(true|false)|([\"'](.*)[\"'])|(.+)$");
     private static final Pattern str = Pattern.compile("^([\"'](.*)[\"'])$");
-    
+
     /**
      * @param c is a Collection or Map, or will throw IllegalArgumentException
      * @return jsonifiy string
@@ -45,13 +45,13 @@ public class Json {
         sb.append(",");
     }
 
-    public static Map fromReaderGetMap(Reader r) throws ParseException {
+    public static Map<String, Object> fromReaderGetMap(Reader r) throws ParseException {
         try (BufferedReader reader = new BufferedReader(r)) {
             StringBuilder res = new StringBuilder();
             while (reader.ready()) {
                 res.append(reader.readLine());
             }
-            return fromStringGetMap(res.toString());
+            return parseDictString(res.toString());
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new ParseException("Error", 1);
@@ -247,6 +247,222 @@ public class Json {
         return res;
     }
 
+    public static Object parseJson(String value) throws ParseException{
+        if (value.length()<2) throw new ParseException("unexpected token", 1);
+        value = value.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "");
+        if (value.charAt(0) == '{') return parseDictString(value);
+        else if (value.charAt(0) == '[') return parseListString(value);
+        else throw new ParseException("unexpected token", 1);
+    }
+    public static Map<String, Object> parseDictString(String value) throws ParseException {
+        assert value != null;
+        value = value.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "");
+        assert value.charAt(0) == '{';
+        if (value.equals("{}")) return new HashMap<>();
+        Map<String, Object> res = new HashMap<>();
+        boolean quote = false;
+        Stack<Integer> big_bracket = new Stack<>();
+        big_bracket.push(0);
+        Stack<Integer> mid_bracket = new Stack<>();
+        int begin = 0;
+        boolean escape = false;
+        boolean last_quote = false;
+        String key = null;
+        int lastkey = -1;
+        for (int i = 1; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (escape)
+                continue;
+            if (c == '/') {
+                escape = true;
+                continue;
+            }
+            if (quote && c != '"') continue;
+            if (c == '{') {
+                big_bracket.push(i);
+                continue;
+            }
+            if (c == '[') {
+                mid_bracket.push(i);
+                continue;
+            }
+            if (c == '}') {
+                int last = big_bracket.pop();
+                if (big_bracket.empty() && i != value.length() - 1) throw new ParseException("Unexpected }", 0);
+                if (big_bracket.size() == 0) {
+                    if (key != null) {
+                        res.put(key, parseNumber(value, lastkey, i));
+                        key = null;
+                        continue;
+                    }
+                } else if (big_bracket.size() == 1) {
+                    if (!mid_bracket.empty()) continue;
+                    if (key == null) throw new ParseException("Unexpected }", 0);
+                    res.put(key, parseDictString(value.substring(last, i + 1)));
+                    key = null;
+                    if (i < value.length() - 2)
+                        assert value.charAt(i + 1) == ',';
+                    continue;
+                } else
+                    continue;
+            }
+            if (c == ']') {
+                int last = mid_bracket.pop();
+                if (mid_bracket.empty()) {
+                    if (big_bracket.size() != 1) continue;
+                    if (key == null) throw new ParseException("Unexpected ]", 0);
+                    res.put(key, parseListString(value.substring(last, i + 1)));
+                    if (i < value.length() - 2)
+                        assert value.charAt(i + 1) == ',';
+                    key = null;
+                    continue;
+                } else continue;
+            }
+            if (!mid_bracket.empty()) continue;
+            if (big_bracket.size() != 1) continue;
+
+            if (last_quote) {
+                last_quote = false;
+                if (c != ':') throw new ParseException(": expected", 0);
+                lastkey = i;
+                continue;
+            }
+            if (c == '"') {
+                if (!quote) {
+                    quote = true;
+                    begin = i + 1;
+                } else {
+                    quote = false;
+                    if (key == null) {
+                        last_quote = true;
+                        key = value.substring(begin, i);
+                    } else {
+                        res.put(key, value.substring(begin, i));
+                        key = null;
+                        if (i < value.length() - 2)
+                            assert value.charAt(i + 1) == ',';
+                        continue;
+                    }
+                }
+            }
+            if (c == ',' && key != null) {
+                res.put(key, parseNumber(value, lastkey, i));
+                key = null;
+            }
+        }
+        assert big_bracket.empty();
+        assert mid_bracket.empty();
+        assert !quote;
+        return res;
+    }
+
+    private static Number parseNumber(String value, int lastkey, int i) throws ParseException {
+        Number n;
+        String s = value.substring(lastkey + 1, i);
+        if (s.contains(".")) {
+            try {
+                n = Double.parseDouble(s);
+            } catch (Exception ex) {
+                throw new ParseException("Wrong Number", 0);
+            }
+        } else {
+            try {
+                n = Integer.parseInt(s);
+            } catch (Exception ex) {
+                throw new ParseException("Wrong Number", 0);
+            }
+        }
+        return n;
+    }
+
+    public static ArrayList<Object> parseListString(String value) throws ParseException {
+        assert value != null;
+        value = value.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "");
+        assert value.charAt(0) == '[';
+        if (value.equals("[]")) return new ArrayList<>();
+        Stack<Integer> mid_bracket = new Stack<>();
+        mid_bracket.add(0);
+        Stack<Integer> big_bracket = new Stack<>();
+        ArrayList<Object> res = new ArrayList<>();
+        boolean quote = false;
+        int begin = 0;
+        boolean escape = false;
+        boolean add = false;
+        for (int i = 1; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (escape)
+                continue;
+            if (c == '/') {
+                escape = true;
+                continue;
+            }
+            if (quote && c != '"') continue;
+            if (c == '{') {
+                big_bracket.push(i);
+                continue;
+            }
+
+            if (c == '[') {
+                mid_bracket.push(i);
+                continue;
+            }
+
+            if (c == '}') {
+                int last = big_bracket.pop();
+                if (big_bracket.empty()) {
+                    if (mid_bracket.size() != 1) continue;
+                    res.add(parseDictString(value.substring(last, i + 1)));
+                    add = true;
+                    continue;
+                } else
+                    continue;
+            }
+            if (c == ']') {
+                int last = mid_bracket.pop();
+                if (mid_bracket.size() == 1) {
+                    if (!big_bracket.empty()) continue;
+                    res.add(parseListString(value.substring(last, i + 1)));
+                    add = true;
+                    if (i < value.length() - 2)
+                        assert value.charAt(i + 1) == ',';
+                    continue;
+                } else if (mid_bracket.size() == 0) {
+                    if (!add) {
+                        res.add(parseNumber(value, begin, i));
+                        add = true;
+                    }
+                } else {
+                    continue;
+                }
+            }
+            if (!big_bracket.empty()) continue;
+            if (mid_bracket.size() != 1) continue;
+
+            if (c == '"') {
+                if (!quote) {
+                    quote = true;
+                    begin = i + 1;
+                } else {
+                    quote = false;
+                    res.add(value.substring(begin, i));
+                    add = true;
+                }
+            }
+
+            if (c == ',') {
+                if (!add)
+                    res.add(parseNumber(value, begin, i));
+                add = false;
+                begin = i;
+            }
+        }
+        assert mid_bracket.empty();
+        assert big_bracket.empty();
+        assert add;
+        assert !quote;
+        return res;
+    }
+
     private Object fromStringGetValue(String value) throws ParseException {
         Object res;
         if (value.equals("")) throw new ParseException("Value Can't be empty", 0);
@@ -282,20 +498,24 @@ public class Json {
         return res;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         String str =
                 "{" +
-                        "'a':12," +
-                        "'b':'ds'," +
-                        "'c':[1,2,3,[1,2,3]]," +
-                        "'d':{'e':4,'f':[1,{'d':213},4],'g':'sd'}" +
+                        "\"a\":12," +
+                        "\"b\":\"d,s\"," +
+                        "\"c\":[1,\"2\",3,[\"1\",2,{\"a\":3},3]]," +
+                        "\"d\":{\"e\":4,\"f\":{\"a\":2},\"g\":\"sd\"}," +
+                        "\"e\":[]" +
                         "}";
-        Json json = new Json(null, str);
-        try {
-            System.out.print(json.fromContext());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        String str =
+//                "{" +
+//                        "'a':12," +
+//                        "'b':'ds'," +
+//                        "'c':[1,2,3,[1,2,3]]," +
+//                        "'d':{'e':4,'f':[1,{'d':213},4],'g':'sd'}" +
+//                        "}";
+        Map<String, Object> map = Json.parseDictString(str);
+        System.out.println(map);
     }
 
 }
