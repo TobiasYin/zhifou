@@ -9,6 +9,7 @@
     User self = (User) request.getAttribute("user");
     boolean success;
     String text= request.getParameter("text");
+    System.out.println(text);
     int start = Integer.parseInt(request.getParameter("start"));
     int end = Integer.parseInt(request.getParameter("end"));
     ArrayList<Answer> users = Answer.getAnswersBySearch(text, start, end);
