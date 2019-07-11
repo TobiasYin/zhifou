@@ -14,7 +14,6 @@
         success = false;
     }else {
         ArrayList<Tip> tips = Tip.getTips(self);
-        System.out.println(tips.get(0).getFields());
         if (tips == null){
             res.put("error", "未知错误");
             success = false;

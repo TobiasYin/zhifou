@@ -59,7 +59,7 @@ public class Tip implements Entity {
 
     public static ArrayList<Tip> getTips(User u) {
         try (Connection c = DataBasePool.getConnection();
-             PreparedStatement s = c.prepareStatement("select type, id, other_user_id, action_name, question_id, answer_id, comment_id, other_comment_id, is_read from tips where user_id = ?");
+             PreparedStatement s = c.prepareStatement("select type, id, other_user_id, action_name, question_id, answer_id, comment_id, other_comment_id, is_read from tips where user_id = ? order by id desc limit 20");
              PreparedStatement read = c.prepareStatement("update tips set is_read = true where user_id = ?")) {
             s.setString(1, u.getId());
             ResultSet res = s.executeQuery();
