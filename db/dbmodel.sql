@@ -110,6 +110,7 @@ create table tips
 );
 # 类型: 1: 回答问题, 2:点赞或反对, 3:评论回答, 4:回复评论
 
+delimiter //
 
 drop trigger if exists comment_add_tip;
 create trigger comment_add_tip
@@ -126,6 +127,7 @@ begin
         values (uid, new.user_id, '回复了您的评论', 4, new.answer_id, new.id);
     end if;
 end;
+//
 
 drop trigger if exists answer_add_tip;
 create trigger answer_add_tip
@@ -138,6 +140,7 @@ begin
     insert into tips(user_id, other_user_id, action_name, type, answer_id, question_id)
     values (uid, new.user_id, '回答了您的问题', 1, new.id, new.question_id);
 end;
+//
 
 drop trigger if exists agree_tip;
 create trigger agree_tip
@@ -155,6 +158,7 @@ begin
         values (uid, new.user_id, '反对了您的回答', 2, new.answer_id);
     end if;
 end;
+//
 
 drop trigger if exists delete_answer;
 create trigger delete_answer before delete on answer
@@ -163,14 +167,6 @@ create trigger delete_answer before delete on answer
         delete from agree where answer_id = old.id;
         delete from tips where answer_id = OLD.id;
     end;
+//
+delimiter ;
 
-
-select * from agree;
-select * from user;
-select * from answer;
-
-insert into agree value ('72e52aa68c1c4baeaf1e9d8955a34e1c', '2054e0635b8e4dad8b41291d9a0fbd0e', 1);
-
-select * from tips;
-
-select * from topic;
