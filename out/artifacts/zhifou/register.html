@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="login">
+    <input id="username" type="text" name="username"/>
+    <input type="password" name="password" id="password"/>
+    <input type="text" name="captcha" id="captcha"/>
+    <input type="button" id="submit" value="获取"/>
+</form>
+</body>
+<script>
+    $("#captcha").after("<img src=\"api/get_captcha?time="+ new Date().getTime() + "\" alt=\"点击更换\">");
+    function get() {
+        var url = "api/register";
+        $.ajax({
+            type: "post",
+            url: url,
+            data: {
+                "username": $("#username").val(),
+                "password": $("#password").val(),
+                "captcha": $("#captcha").val()
+            },
+            cache: false,
+            async:
+                false,
+            dataType:
+                "json",
+            success:
+                function (data, textStatus, jqXHR) {
+                    if (data.success) {
+                        alert("成功");
+                        return true;
+                    } else {
+                        alert(data.error);
+                        return false;
+                    }
+                }
+            ,
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("请求失败！");
+            }
+        })
+        ;
+
+    }
+
+    $("#submit").bind("click", function () {
+        get();
+    })
+
+
+</script>
+</html>

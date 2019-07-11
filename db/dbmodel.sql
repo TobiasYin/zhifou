@@ -1,3 +1,4 @@
+drop  table if exists tips;
 drop table if exists comment;
 drop table if exists follow;
 drop table if exists ques_topic;
