@@ -265,14 +265,13 @@ public class Answer implements Entity {
         int count = 0;
         ArrayList<Answer> answers = new ArrayList<>();
         while (res.next()) {
-            if (start > count) {
-                count++;
-                continue;
+            if (count >= start) {
+                Answer item = initAnswer(res);
+                item.user = User.getById(item.user_id);
+                item.question = new Question(item.question_id);
+                answers.add(item);
             }
-            Answer item = initAnswer(res);
-            item.user = User.getById(item.user_id);
-            item.question = new Question(item.question_id);
-            answers.add(item);
+            count++;
         }
         return answers;
     }
