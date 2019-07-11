@@ -2,9 +2,9 @@ drop  table if exists tips;
 drop table if exists comment;
 drop table if exists follow;
 drop table if exists ques_topic;
+drop table if exists agree;
 drop table if exists answer;
 drop table if exists topic;
-drop table if exists agree;
 drop table if exists question;
 drop table if exists user;
 create table user
